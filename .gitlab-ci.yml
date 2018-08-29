@@ -13,12 +13,12 @@ image: docker-registry.net-ng.com/nng/dind-ubuntu:7
 
 tests2:
   script:
-    - /opt/stackless/bin/pip2 install flake8 pytest .
-    - /opt/stackless/bin/flake8 nagare
-    - /opt/stackless/bin/pytest
+    - pip2 install flake8 pytest .
+    - flake8 nagare
+    - pytest
 
 tests3:
   script:
-  - /opt/stackless/bin/pip3 install flake8 pytest .
-  - /opt/stackless/bin/flake8 nagare
-  - /opt/stackless/bin/pytest
+  - pip3 install flake8 pytest .
+  - flake8 nagare
+  - pytest

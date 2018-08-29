@@ -446,7 +446,7 @@ class XmlRenderer(object):
 
         return self
 
-    def parse(self, source, tags_factory=Tag, fragment=False, no_leading_text=False, **kw):
+    def fromfile(self, source, tags_factory=Tag, fragment=False, no_leading_text=False, **kw):
         """Parse a XML file
 
         In:
@@ -514,7 +514,7 @@ class XmlRenderer(object):
         if isinstance(text, type(u'')):
             text = text.encode(kw.setdefault('encoding', 'utf-8'))
 
-        return self.parse(BufferIO(text), tags_factory, fragment, no_leading_text, **kw)
+        return self.fromfile(BufferIO(text), tags_factory, fragment, no_leading_text, **kw)
 
 # ---------------------------------------------------------------------------
 

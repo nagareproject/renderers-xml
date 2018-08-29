@@ -30,7 +30,7 @@ def test_parse_xml1():
     """Good encoding"""
     try:
         x = xml.Renderer()
-        x.parse(os.path.join(os.path.dirname(__file__), 'test_xmlns_1.xml'))
+        x.fromfile(os.path.join(os.path.dirname(__file__), 'test_xmlns_1.xml'))
     except UnicodeDecodeError:
         assert False
     else:
@@ -42,7 +42,7 @@ def test_parse_xmlstring2():
     try:
         x = xml.Renderer()
         f = open(os.path.join(os.path.dirname(__file__), 'iso-8859.xml'))
-        x.parse(f, encoding='utf-8')
+        x.fromfile(f, encoding='utf-8')
         f.close()
     except (etree.XMLSyntaxError, UnicodeDecodeError):
         assert True

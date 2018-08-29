@@ -9,7 +9,7 @@
 # this distribution.
 # --
 
-image: docker-registry.net-ng.com/nng/ubuntu:7
+image: docker-registry.net-ng.com/nng/dind-ubuntu:7
 
 tests2:
   script:

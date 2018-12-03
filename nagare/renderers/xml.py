@@ -78,7 +78,7 @@ class Tag(etree.ElementBase):
           - the renderer
         """
         # The renderer is search first, in this tag, else at the root of the tree
-        return getattr(self, '_renderer', None) or self.root._renderer
+        return getattr(self, '_renderer', None) or getattr(self.root, '_renderer', None)
 
     def on_change(self):
         if CHECK_ATTRIBUTES and self._authorized_attribs and not frozenset(self.attrib).issubset(self._authorized_attribs):
@@ -146,17 +146,6 @@ class Tag(etree.ElementBase):
                 del element.attrib[_MELD_ID]
 
         return etree.tostring(self, method=method, encoding=encoding, **kw)
-
-    def xpath(self, *args, **kw):
-        """Override ``xpath()`` to associate a renderer to all the returned nodes
-        """
-        nodes = super(Tag, self).xpath(*args, **kw)
-
-        renderer = self.renderer
-        for node in nodes:
-            node._renderer = renderer
-
-        return nodes
 
     def findmeld(self, id, default=None):
         """Find a tag with a given ``meld:id`` value

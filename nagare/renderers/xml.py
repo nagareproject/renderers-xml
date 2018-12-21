@@ -13,10 +13,21 @@ import copy
 import types
 import urllib
 import random
+
 try:
     from cStringIO import StringIO as BufferIO
 except ImportError:
     from io import BytesIO as BufferIO
+
+try:
+    from codecs import open as fileopen
+except ImportError:
+    fileopen = open
+
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib import urlopen
 
 from lxml import etree, objectify
 
@@ -435,7 +446,7 @@ class XmlRenderer(object):
 
         return self
 
-    def fromfile(self, source, tags_factory=Tag, fragment=False, no_leading_text=False, **kw):
+    def fromfile(self, source, tags_factory=Tag, fragment=False, no_leading_text=False, encoding='utf-8', **kw):
         """Parse a XML file
 
         In:
@@ -451,10 +462,13 @@ class XmlRenderer(object):
           - a list of XML elements, if ``fragment`` is ``True``
         """
         if isinstance(source, (str, type(u''))):
-            source = (urllib.open if source.startswith(('http://', 'https://', 'ftp://')) else open)(source)
+            if source.startswith(('http://', 'https://', 'ftp://')):
+                source = urlopen(source)
+            else:
+                source = fileopen(source, encoding=encoding)
 
         # Create a dedicated parser with the ``kw`` parameter
-        parser = self._parser.__class__(**kw)
+        parser = self._parser.__class__(encoding=encoding, **kw)
         # This parser will generate nodes of type ``Tag``
         parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=tags_factory))
 
@@ -483,7 +497,7 @@ class XmlRenderer(object):
                 e._renderer = self
 
         # Return the children of the dummy root
-        return ((root.text,) if root.text and not no_leading_text else ()) + tuple(root[:])
+        return ((root.text.encode(encoding),) if root.text and not no_leading_text else ()) + tuple(root[:])
 
     def fromstring(self, text, tags_factory=Tag, fragment=False, no_leading_text=False, **kw):
         """Parse a XML string

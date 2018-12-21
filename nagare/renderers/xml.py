@@ -11,7 +11,6 @@
 
 import copy
 import types
-import urllib
 import random
 
 try:

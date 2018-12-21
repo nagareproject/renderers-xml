@@ -57,7 +57,7 @@ def test_parse_xmlstring3():
     """Parse fragment xml with fragment flag"""
     x = xml.Renderer()
     roots = x.fromstring(xml_fragments_1, fragment=True)
-    assert roots[0] == 'leading_text'
+    assert roots[0] == b'leading_text'
     assert roots[1].tostring() == b'<fragment1/>text'
     assert roots[1].tail == 'text'
     assert roots[2].tostring() == b'<fragment2/>'

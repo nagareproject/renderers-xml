@@ -20,9 +20,9 @@ try:
 
     # Under Stackless Python or PyPy, the pre-compiled lxml wheel ends with a segfault
     subprocess.check_call([sys.executable] + ' -m pip install --no-binary :all: lxml'.split())
-    install_requires = []
 except ImportError:
-    install_requires = ['lxml']
+    pass
+
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as description:
     LONG_DESCRIPTION = description.read()
@@ -41,5 +41,5 @@ setup(
     zip_safe=False,
     setup_requires=['setuptools_scm'],
     use_scm_version=True,
-    install_requires=install_requires
+    install_requires=['lxml']
 )

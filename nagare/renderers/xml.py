@@ -48,7 +48,7 @@ def is_iterable(o):
     return isinstance(o, (list, tuple, types.GeneratorType))
 
 
-def flatten(l, renderer):
+def flatten(l, renderer):  # noqa: E741
     for e in l:
         if isinstance(e, Component):
             e = e.render(renderer)
@@ -299,7 +299,7 @@ class XmlRenderer(object):
     _parser = etree.XMLParser()
     _parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=Tag))
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, *args, **kw):
         """Renderer initialisation
         """
         if parent is None:
@@ -517,6 +517,14 @@ class XmlRenderer(object):
             text = text.encode(kw.setdefault('encoding', 'utf-8'))
 
         return self.fromfile(BufferIO(text), tags_factory, fragment, no_leading_text, **kw)
+
+    @staticmethod
+    def start_rendering(*args, **kw):
+        pass
+
+    @staticmethod
+    def end_rendering(rendering, *args, **kw):
+        return rendering
 
 # ---------------------------------------------------------------------------
 

@@ -39,7 +39,7 @@ _MELD_ID = '{%s}id' % MELD_NS
 # ---------------------------------------------------------------------------
 
 
-class Component(object):
+class Renderable(object):
     def render(self, renderer):
         return self
 
@@ -50,7 +50,7 @@ def is_iterable(o):
 
 def flatten(l, renderer):  # noqa: E741
     for e in l:
-        if isinstance(e, Component):
+        if isinstance(e, Renderable):
             e = e.render(renderer)
 
         if is_iterable(e):

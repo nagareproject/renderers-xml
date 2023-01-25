@@ -10,18 +10,8 @@
 # --
 
 import os
-import sys
-import subprocess
 
 from setuptools import setup, find_packages
-
-try:
-    import stackless  # noqa: F401
-
-    # Under Stackless Python or PyPy, the pre-compiled lxml wheel ends with a segfault
-    subprocess.check_call([sys.executable] + ' -m pip install --no-binary :all: lxml'.split())
-except ImportError:
-    pass
 
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as description:
@@ -36,10 +26,17 @@ setup(
     license='BSD',
     keywords='',
     url='https://github.com/nagareproject/renderers-xml',
-    python_requires='>=2.7.*,!=3.0,!=3.1,!=3.2,!=3.3,!=3.4',
+    python_requires='>=2.7,!=3.0,!=3.1,!=3.2,!=3.3,!=3.4',
     packages=find_packages(),
     zip_safe=False,
     setup_requires=['setuptools_scm'],
     use_scm_version=True,
-    install_requires=['lxml']
+    install_requires=[
+        "lxml"
+        "@ https://files.pythonhosted.org/packages"
+        "/06/5a/e11cad7b79f2cf3dd2ff8f81fa8ca667e7591d3d8451768589996b65dec1"
+        "/lxml-4.9.2.tar.gz"
+        " ; platform_system!='Windows' and python_full_version=='3.8.1'",
+        "lxml ; platform_system=='Windows' or python_full_version!='3.8.1'",
+    ],
 )

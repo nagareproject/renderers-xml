@@ -324,7 +324,7 @@ class XmlRenderer(object):
         Prevent the common error of capturing the renderer into the closure
         of a callback
         """
-        raise TypeError("can't pickle Renderer objects (are you using a renderer object in a callback ?)")
+        raise TypeError("can't pickle Renderer objects (are you using a renderer object in a callback?)")
 
     @staticmethod
     def generate_id(prefix=''):
@@ -453,7 +453,7 @@ class XmlRenderer(object):
           - ``fragment`` -- if ``True``, can parse a XML fragment i.e a XML without
             a unique root
           - ``no_leading_text`` -- if ``fragment`` is ``True``, ``no_leading_text``
-            is ``False`` and the XML to parsed begins by a text, this text is keeped
+            is ``False`` and the XML to parsed begins by a text, this text is kept
           - ``kw`` -- keywords parameters are passed to the XML parser
 
         Return:

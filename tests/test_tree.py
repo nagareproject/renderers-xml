@@ -1,5 +1,5 @@
 # --
-# Copyright (c) 2008-2022 Net-ng.
+# Copyright (c) 2008-2023 Net-ng.
 # All rights reserved.
 #
 # This software is licensed under the BSD License, as described in
@@ -133,7 +133,7 @@ def test_add_children():
             return '[C]'
 
     foo = x.foo
-    foo.add_children(['hello', 42, 10.0, None, C(), 2 ** 40 - 1, u'world'])
+    foo.add_children(['hello', 42, 10.0, None, C(), 2**40 - 1, u'world'])
     assert foo.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     foo = x.foo
@@ -165,7 +165,7 @@ def test_add_children():
     assert foo.tostring() == b'<foo a="[C]"/>'
 
     foo = x.foo
-    foo.add_children([], {'a': 2 ** 40 - 1})
+    foo.add_children([], {'a': 2**40 - 1})
     assert foo.tostring() == b'<foo a="1099511627775"/>'
 
     foo = x.foo
@@ -189,7 +189,7 @@ def test_add_children():
     assert foo.tostring() == b'<foo a="[C]"/>'
 
     foo = x.foo
-    foo.add_children([{'a': 2 ** 40 - 1}])
+    foo.add_children([{'a': 2**40 - 1}])
     assert foo.tostring() == b'<foo a="1099511627775"/>'
 
 
@@ -212,13 +212,13 @@ def test_call():
         def __str__(self):
             return '[C]'
 
-    foo = x.foo('hello', 42, 10.0, None, C(), 2 ** 40 - 1, u'world')
+    foo = x.foo('hello', 42, 10.0, None, C(), 2**40 - 1, u'world')
     assert foo.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
-    foo = x.foo(['hello', 42, 10.0, None, C(), 2 ** 40 - 1, u'world'])
+    foo = x.foo(['hello', 42, 10.0, None, C(), 2**40 - 1, u'world'])
     assert foo.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
-    foo = x.foo(('hello', 42, 10.0, None, C(), 2 ** 40 - 1, u'world'))
+    foo = x.foo(('hello', 42, 10.0, None, C(), 2**40 - 1, u'world'))
     assert foo.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     def g(n):
@@ -256,7 +256,7 @@ def test_call():
     foo = x.foo(a=C())
     assert foo.tostring() == b'<foo a="[C]"/>'
 
-    foo = x.foo(a=2 ** 40 - 1)
+    foo = x.foo(a=2**40 - 1)
     assert foo.tostring() == b'<foo a="1099511627775"/>'
 
     tree = x.foo('hello', x.bar(a=10), 'world', {'b': 42}, x.bar('bar'))
@@ -301,17 +301,17 @@ def test_with():
         x << 'hello' << 42 << 10.0
         x << None
         x << C()
-        x << 2 ** 40 - 1 << u'world'
+        x << 2**40 - 1 << u'world'
     assert x.root.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     x = xml.Renderer()
     with x.foo:
-        x << ['hello', 42, 10.0, None, C(), 2 ** 40 - 1, u'world']
+        x << ['hello', 42, 10.0, None, C(), 2**40 - 1, u'world']
     assert x.root.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     x = xml.Renderer()
     with x.foo:
-        x << ('hello', 42, 10.0, None, C(), 2 ** 40 - 1, u'world')
+        x << ('hello', 42, 10.0, None, C(), 2**40 - 1, u'world')
     assert x.root.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     def g(n):
@@ -360,7 +360,7 @@ def test_with():
 
     x = xml.Renderer()
     with x.foo:
-        x << {'a': 2 ** 40 - 1}
+        x << {'a': 2**40 - 1}
     assert x.root.tostring() == b'<foo a="1099511627775"/>'
 
     x = xml.Renderer()

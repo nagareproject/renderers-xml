@@ -1,5 +1,5 @@
 # --
-# Copyright (c) 2008-2022 Net-ng.
+# Copyright (c) 2008-2023 Net-ng.
 # All rights reserved.
 #
 # This software is licensed under the BSD License, as described in
@@ -165,8 +165,14 @@ def test_repeat3():
 
     h << root
 
-    assert h.root.tostring() == b'<div xmlns:meld="http://www.plope.com/software/meld3"><ul><li meld:id="entry"><span meld:id="count">0</span></li><li meld:id="entry"><span meld:id="count">1</span></li></ul></div>'
-    assert h.root.tostring(pipeline=False) == b'<div xmlns:meld="http://www.plope.com/software/meld3"><ul><li><span>0</span></li><li><span>1</span></li></ul></div>'
+    assert (
+        h.root.tostring()
+        == b'<div xmlns:meld="http://www.plope.com/software/meld3"><ul><li meld:id="entry"><span meld:id="count">0</span></li><li meld:id="entry"><span meld:id="count">1</span></li></ul></div>'
+    )
+    assert (
+        h.root.tostring(pipeline=False)
+        == b'<div xmlns:meld="http://www.plope.com/software/meld3"><ul><li><span>0</span></li><li><span>1</span></li></ul></div>'
+    )
 
 
 def test_namespaces():

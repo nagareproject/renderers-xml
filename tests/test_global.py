@@ -1,5 +1,5 @@
 # --
-# Copyright (c) 2008-2022 Net-ng.
+# Copyright (c) 2008-2023 Net-ng.
 # All rights reserved.
 #
 # This software is licensed under the BSD License, as described in
@@ -72,9 +72,7 @@ def test_global2():
 
     reader = csv.reader(open(file_path))
 
-    root = x.hello(
-        [x.world(row[1], {'language': row[0]}) for row in reader]
-    )
+    root = x.hello([x.world(row[1], {'language': row[0]}) for row in reader])
 
     xml_to_test = root.tostring(xml_declaration=True, pretty_print=True)
 
@@ -105,10 +103,7 @@ def test_global4():
 
     root.findmeld('title').text = 'My document'
     root.findmeld('form1').set('action', './handler')
-    data = (
-        {'name': 'Girls', 'description': 'Pretty'},
-        {'name': 'Boys', 'description': 'Ugly'},
-    )
+    data = ({'name': 'Girls', 'description': 'Pretty'}, {'name': 'Boys', 'description': 'Ugly'})
 
     iterator = root.findmeld('tr').repeat(data)
     for element, item in iterator:
@@ -116,7 +111,12 @@ def test_global4():
         td1.text = item['name']
         element.findmeld('td2').text = item['description']
 
-    assert [elt.text for elt in root.xpath('.//x:td', namespaces={'x': 'http://www.w3.org/1999/xhtml'})] == ['Girls', 'Pretty', 'Boys', 'Ugly']
+    assert [elt.text for elt in root.xpath('.//x:td', namespaces={'x': 'http://www.w3.org/1999/xhtml'})] == [
+        'Girls',
+        'Pretty',
+        'Boys',
+        'Ugly',
+    ]
     assert root[0][1].text == 'My document'
     assert root.xpath('.//x:form', namespaces={'x': 'http://www.w3.org/1999/xhtml'})[0].attrib['action'] == './handler'
 
@@ -129,10 +129,7 @@ def test_global5():
     root.findmeld('title').text = 'My document'
     root.findmeld('form1').set('action', './handler')
 
-    data = (
-        {'name': 'Girls', 'description': 'Pretty'},
-        {'name': 'Boys', 'description': 'Ugly'},
-    )
+    data = ({'name': 'Girls', 'description': 'Pretty'}, {'name': 'Boys', 'description': 'Ugly'})
 
     children = []
     for elt in data:
@@ -152,10 +149,7 @@ def test_global6():
     root.findmeld('title').text = 'My document'
     root.findmeld('form1').set('action', './handler')
 
-    data = (
-        {'name': 'Girls', 'description': 'Pretty'},
-        {'name': 'Boys', 'description': 'Ugly'},
-    )
+    data = ({'name': 'Girls', 'description': 'Pretty'}, {'name': 'Boys', 'description': 'Ugly'})
 
     children = []
     for elt in data:
@@ -177,10 +171,7 @@ def test_global7():
     root.findmeld('title').text = 'My document'
     root.findmeld('form1').set('action', './handler')
 
-    data = (
-        {'name': 'Girls', 'description': 'Pretty'},
-        {'name': 'Boys', 'description': 'Ugly'},
-    )
+    data = ({'name': 'Girls', 'description': 'Pretty'}, {'name': 'Boys', 'description': 'Ugly'})
 
     children = []
     for elt in data:
@@ -198,10 +189,7 @@ def test_global8():
     """Create xml"""
     x = xml.Renderer()
     x.namespaces = {'meld': 'http://www.plope.com/software/meld3'}
-    data = (
-        {'name': 'Girls', 'description': 'Pretty'},
-        {'name': 'Boys', 'description': 'Ugly'},
-    )
+    data = ({'name': 'Girls', 'description': 'Pretty'}, {'name': 'Boys', 'description': 'Ugly'})
 
     with x.html:
         with x.head:

@@ -1,5 +1,5 @@
 # --
-# Copyright (c) 2008-2023 Net-ng.
+# Copyright (c) 2008-2024 Net-ng.
 # All rights reserved.
 #
 # This software is licensed under the BSD License, as described in
@@ -10,8 +10,8 @@
 """XML renderer."""
 
 import copy
-import random
 import types
+import random
 
 try:
     from cStringIO import StringIO as BufferIO
@@ -465,7 +465,7 @@ class XmlRenderer(object):
           - the root element of the parsed XML, if ``fragment`` is ``False``
           - a list of XML elements, if ``fragment`` is ``True``
         """
-        if isinstance(source, (str, type(u''))):
+        if isinstance(source, str):
             if source.startswith(('http://', 'https://', 'ftp://')):
                 source = urlopen(source)
             else:
@@ -518,7 +518,7 @@ class XmlRenderer(object):
           - the root element of the parsed XML, if ``fragment`` is ``False``
           - a list of XML elements, if ``fragment`` is ``True``
         """
-        if isinstance(text, type(u'')):
+        if isinstance(text, str):
             text = text.encode(kw.setdefault('encoding', 'utf-8'))
 
         return self.fromfile(BufferIO(text), tags_factory, fragment, no_leading_text, **kw)

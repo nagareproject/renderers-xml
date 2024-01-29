@@ -10,8 +10,8 @@
 """XML renderer."""
 
 import copy
-import types
 import random
+from collections.abc import Iterable
 
 try:
     from cStringIO import StringIO as BufferIO
@@ -45,7 +45,7 @@ class Renderable(object):
 
 
 def is_iterable(o):
-    return isinstance(o, (list, tuple, types.GeneratorType))
+    return not isinstance(o, (str, Tag, dict)) and isinstance(o, Iterable)
 
 
 def flatten(l, renderer):  # noqa: E741

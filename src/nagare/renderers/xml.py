@@ -45,7 +45,7 @@ class Renderable(object):
 
 
 def is_iterable(o):
-    return not isinstance(o, (str, Tag, dict)) and isinstance(o, Iterable)
+    return not isinstance(o, (str, Tag, dict, etree._Element)) and isinstance(o, Iterable)
 
 
 def flatten(l, renderer):  # noqa: E741

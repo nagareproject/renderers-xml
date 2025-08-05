@@ -1,5 +1,5 @@
 # --
-# Copyright (c) 2008-2024 Net-ng.
+# Copyright (c) 2008-2025 Net-ng.
 # All rights reserved.
 #
 # This software is licensed under the BSD License, as described in
@@ -45,7 +45,7 @@ class Renderable(object):
 
 
 def is_iterable(o):
-    return not isinstance(o, (str, Tag, dict, etree._Element)) and isinstance(o, Iterable)
+    return not isinstance(o, (str, Tag, dict, etree._Element, bytes)) and isinstance(o, Iterable)
 
 
 def flatten(l, renderer):  # noqa: E741
@@ -409,7 +409,7 @@ class XmlRenderer(object):
     def new(self, *args, **kw):
         return self.__class__(*args, **kw)
 
-    def makeelement(self, tag, *args):
+    def makeelement(self, tag, *args, **kw):
         """Make a tag, in the default namespace set.
 
         In:
@@ -422,7 +422,7 @@ class XmlRenderer(object):
         element = self._parser.makeelement(self._prefix + tag, nsmap=self.namespaces)
         element.init(self)
 
-        return element
+        return element(*args, **kw)
 
     def enter(self, current):
         """A new tag is pushed by a ``with`` statement.
@@ -484,7 +484,9 @@ class XmlRenderer(object):
             source.close()
 
             # Attach the renderer to the root
-            root._renderer = self
+            if root is not None:
+                root._renderer = self
+
             return root
 
         # Parse a fragment (multiple roots)

@@ -1,10 +1,10 @@
-# =-
-# (C)opyright Net-ng 2008-2024
+# --
+# (C)opyright Net-ng 2008-2025
 #
 # This is Net-ng proprietary source code
 # Any reproduction modification or use without prior written
 # approval from Net-ng is strictly forbidden.
-# =-
+# --
 
 [build-system]
 requires = ['setuptools', 'wheel', 'setuptools_scm']
@@ -16,17 +16,14 @@ build-backend = 'setuptools.build_meta'
 name = 'nagare-renderers-xml'
 dynamic = ['version']
 description = 'Nagare XML renderer'
-authors = [
-    {name = 'Net-ng'},
-    {email = 'contact@net-ng.com'}
-]
-license = {file = 'LICENSE.txt'}
+authors = [{ name = 'Net-ng' }, { email = 'contact@net-ng.com' }]
+license = { file = 'LICENSE.txt' }
 requires-python = '>=3.8'
 dependencies = [
     """lxml \
      @ https://files.pythonhosted.org/packages/06/5a/e11cad7b79f2cf3dd2ff8f81fa8ca667e7591d3d8451768589996b65dec1/lxml-4.9.2.tar.gz \
      ; platform_system!='Windows' and python_full_version=='3.8.1'""",
-    "lxml ; platform_system=='Windows' or python_full_version!='3.8.1'"
+    "lxml ; platform_system=='Windows' or python_full_version!='3.8.1'",
 ]
 
 [project.readme]
@@ -34,14 +31,7 @@ file = 'README.rst'
 content-type = 'text/x-rst'
 
 [project.optional-dependencies]
-dev = [
-    'sphinx',
-    'sphinx_rtd_theme',
-    'pre-commit',
-    'ruff',
-    'pytest',
-    'twine'
-]
+dev = ['sphinx', 'sphinx_rtd_theme', 'pre-commit', 'ruff', 'pytest', 'twine']
 
 [project.urls]
 Homepage = 'https://nagare.org'
@@ -55,8 +45,25 @@ line-length = 120
 format.quote-style = 'single'
 
 [tool.ruff.lint]
-select = ['C4', 'COM', 'D', 'E', 'ERA', 'F', 'I', 'ISC', 'INP', 'PIE', 'Q', 'S', 'SIM', 'TID', 'W', 'YTT']
-ignore = ['COM812', 'D10', 'D401', 'ISC001', 'S311', 'S320']
+select = [
+    'C4',
+    'COM',
+    'D',
+    'E',
+    'ERA',
+    'F',
+    'I',
+    'ISC',
+    'INP',
+    'PIE',
+    'Q',
+    'S',
+    'SIM',
+    'TID',
+    'W',
+    'YTT',
+]
+ignore = ['COM812', 'D10', 'D401', 'ISC001', 'S311']
 isort.length-sort = true
 pydocstyle.convention = 'google'
 flake8-quotes.inline-quotes = 'single'

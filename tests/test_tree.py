@@ -36,7 +36,7 @@ def test_root1():
 
 
 def test_root2():
-    """One element"""
+    """One element."""
     x = xml.Renderer()
     x << x.node()
 
@@ -44,7 +44,7 @@ def test_root2():
 
 
 def test_root3():
-    """Two elements"""
+    """Two elements."""
     x = xml.Renderer()
     x << x.node()
     x << x.node()
@@ -74,7 +74,7 @@ def test_renderer():
 
 
 def test_append_text1():
-    """Append text to an empty node"""
+    """Append text to an empty node."""
     x = xml.Renderer()
 
     node = x.node('test')
@@ -83,7 +83,7 @@ def test_append_text1():
 
 
 def test_append_text2():
-    """Append text to node with text child"""
+    """Append text to node with text child."""
     x = xml.Renderer()
 
     node = x.node('test1')
@@ -93,7 +93,7 @@ def test_append_text2():
 
 
 def test_append_text3():
-    """Append text to node with node child"""
+    """Append text to node with node child."""
     x = xml.Renderer()
 
     node = x.node(x.child())
@@ -103,7 +103,7 @@ def test_append_text3():
 
 
 def test_append4():
-    """Append text to node with text & node children"""
+    """Append text to node with text & node children."""
     x = xml.Renderer()
 
     node = x.node(['test1', x.child()])
@@ -128,12 +128,12 @@ def test_add_children():
     foo.add_children(['hello', x.bar, 'world'])
     assert foo.tostring() == b'<foo>hello<bar/>world</foo>'
 
-    class C(object):
+    class C:
         def __str__(self):
             return '[C]'
 
     foo = x.foo
-    foo.add_children(['hello', 42, 10.0, None, C(), 2**40 - 1, u'world'])
+    foo.add_children(['hello', 42, 10.0, None, C(), 2**40 - 1, 'world'])
     assert foo.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     foo = x.foo
@@ -208,17 +208,17 @@ def test_call():
     foo = x.foo('hello', x.bar, 'world')
     assert foo.tostring() == b'<foo>hello<bar/>world</foo>'
 
-    class C(object):
+    class C:
         def __str__(self):
             return '[C]'
 
-    foo = x.foo('hello', 42, 10.0, None, C(), 2**40 - 1, u'world')
+    foo = x.foo('hello', 42, 10.0, None, C(), 2**40 - 1, 'world')
     assert foo.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
-    foo = x.foo(['hello', 42, 10.0, None, C(), 2**40 - 1, u'world'])
+    foo = x.foo(['hello', 42, 10.0, None, C(), 2**40 - 1, 'world'])
     assert foo.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
-    foo = x.foo(('hello', 42, 10.0, None, C(), 2**40 - 1, u'world'))
+    foo = x.foo(('hello', 42, 10.0, None, C(), 2**40 - 1, 'world'))
     assert foo.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     def g(n):
@@ -292,7 +292,7 @@ def test_with():
         x << 'world'
     assert x.root.tostring() == b'<foo>hello<bar/>world</foo>'
 
-    class C(object):
+    class C:
         def __str__(self):
             return '[C]'
 
@@ -301,17 +301,17 @@ def test_with():
         x << 'hello' << 42 << 10.0
         x << None
         x << C()
-        x << 2**40 - 1 << u'world'
+        x << 2**40 - 1 << 'world'
     assert x.root.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     x = xml.Renderer()
     with x.foo:
-        x << ['hello', 42, 10.0, None, C(), 2**40 - 1, u'world']
+        x << ['hello', 42, 10.0, None, C(), 2**40 - 1, 'world']
     assert x.root.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     x = xml.Renderer()
     with x.foo:
-        x << ('hello', 42, 10.0, None, C(), 2**40 - 1, u'world')
+        x << ('hello', 42, 10.0, None, C(), 2**40 - 1, 'world')
     assert x.root.tostring() == b'<foo>hello4210.0[C]1099511627775world</foo>'
 
     def g(n):

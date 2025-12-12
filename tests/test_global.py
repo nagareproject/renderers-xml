@@ -12,7 +12,6 @@ import csv
 
 from nagare.renderers import xml
 
-
 xml_test2_in = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml"
           xmlns:meld="http://www.plope.com/software/meld3"
@@ -45,7 +44,7 @@ xml_test2_in = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 
 
 def test_global1():
-    """Create xml by procedural way"""
+    """Create xml by procedural way."""
     x = xml.Renderer()
 
     file_path = os.path.join(os.path.dirname(__file__), 'helloworld.csv')
@@ -65,7 +64,7 @@ def test_global1():
 
 
 def test_global2():
-    """Create xml by functionnal way"""
+    """Create xml by functionnal way."""
     x = xml.Renderer()
 
     file_path = os.path.join(os.path.dirname(__file__), 'helloworld.csv')
@@ -82,7 +81,7 @@ def test_global2():
 
 
 def test_global3():
-    """Test parse() method"""
+    """Test parse() method."""
     x = xml.Renderer()
 
     with open(os.path.join(os.path.dirname(__file__), 'test_xmlns_1.xml')) as f:
@@ -96,8 +95,7 @@ def test_global3():
 
 
 def test_global4():
-    """Test findmeld() with children affectation"""
-
+    """Test findmeld() with children affectation."""
     x = xml.Renderer()
     root = x.fromstring(xml_test2_in)
 
@@ -122,7 +120,7 @@ def test_global4():
 
 
 def test_global5():
-    """Test findmeld() & replace()"""
+    """Test findmeld() & replace()."""
     x = xml.Renderer()
     root = x.fromstring(xml_test2_in)
 
@@ -142,7 +140,7 @@ def test_global5():
 
 
 def test_global6():
-    """Test tostring() with option pipeline=False"""
+    """Test tostring() with option pipeline=False."""
     x = xml.Renderer()
     root = x.fromstring(xml_test2_in)
 
@@ -164,7 +162,7 @@ def test_global6():
 
 
 def test_global7():
-    """Test tostring() with option pipeline=True"""
+    """Test tostring() with option pipeline=True."""
     x = xml.Renderer()
     root = x.fromstring(xml_test2_in)
 
@@ -186,7 +184,7 @@ def test_global7():
 
 
 def test_global8():
-    """Create xml"""
+    """Create xml."""
     x = xml.Renderer()
     x.namespaces = {'meld': 'http://www.plope.com/software/meld3'}
     data = ({'name': 'Girls', 'description': 'Pretty'}, {'name': 'Boys', 'description': 'Ugly'})
@@ -201,18 +199,16 @@ def test_global8():
             with x.div:
                 pass
             x << x.comment(' empty tag ')
-            with x.div:
-                with x.form.meld_id('form1'):
-                    x << {'action': './handler'}
-                    with x.table:
-                        with x.tbody:
-                            with x.tr:
-                                x << x.th('Name') << x.th('Description')
-                            for elt in data:
-                                with x.tr.meld_id('tr'):
-                                    x << x.td(elt['name']).meld_id('td') << x.td(elt['description']).meld_id('td')
-                    with x.input:
-                        x << {'type': 'submit', 'name': 'next', 'value': ' Next '}
+            with x.div, x.form.meld_id('form1'):
+                x << {'action': './handler'}
+                with x.table, x.tbody:
+                    with x.tr:
+                        x << x.th('Name') << x.th('Description')
+                    for elt in data:
+                        with x.tr.meld_id('tr'):
+                            x << x.td(elt['name']).meld_id('td') << x.td(elt['description']).meld_id('td')
+                with x.input:
+                    x << {'type': 'submit', 'name': 'next', 'value': ' Next '}
 
     assert [elt.text for elt in x.root.xpath('.//td')] == ['Girls', 'Pretty', 'Boys', 'Ugly']
     assert x.root[0][1].text == 'My document'

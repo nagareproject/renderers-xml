@@ -11,22 +11,9 @@
 
 import copy
 import random
+from io import BytesIO as BufferIO
+from urllib.request import urlopen
 from collections.abc import Iterable
-
-try:
-    from cStringIO import StringIO as BufferIO
-except ImportError:
-    from io import BytesIO as BufferIO
-
-try:
-    from codecs import open as fileopen
-except ImportError:
-    fileopen = open
-
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib import urlopen
 
 from lxml import etree, objectify
 
@@ -39,7 +26,7 @@ _MELD_ID = '{%s}id' % MELD_NS
 # ---------------------------------------------------------------------------
 
 
-class Renderable(object):
+class Renderable:
     def render(self, renderer):
         return self
 
@@ -54,8 +41,7 @@ def flatten(l, renderer):  # noqa: E741
             e = e.render(renderer)
 
         if is_iterable(e):
-            for x in flatten(e, renderer):
-                yield x
+            yield from flatten(e, renderer)
         else:
             yield e
 
@@ -105,7 +91,7 @@ class Tag(etree.ElementBase):
         if not children and not attrib:
             return
 
-        dummy = self._dummy_maker.dummy(attrib, *flatten(children, self.renderer))
+        dummy = self._dummy_maker.dummy(attrib or {}, *flatten(children, self.renderer))
 
         if dummy.text:
             if len(self):
@@ -251,7 +237,7 @@ class Tag(etree.ElementBase):
             yield clone, thing
 
 
-class TagProp(object):
+class TagProp:
     """Tag factory with a behavior of an object attribute.
 
     Each time this attribute is read, a new tag is created
@@ -297,7 +283,7 @@ class TagProp(object):
 # -----------------------------------------------------------------------
 
 
-class XmlRenderer(object):
+class XmlRenderer:
     """The base class of all the renderers that generate a XML dialect."""
 
     doctype = ''
@@ -465,36 +451,38 @@ class XmlRenderer(object):
           - the root element of the parsed XML, if ``fragment`` is ``False``
           - a list of XML elements, if ``fragment`` is ``True``
         """
-        if isinstance(source, str):
-            if source.startswith(('http://', 'https://', 'ftp://')):
-                source = urlopen(source)
-            else:
-                source = fileopen(source, encoding=encoding)
+        try:
+            if isinstance(source, str):
+                if source.startswith(('http://', 'https://', 'ftp://')):
+                    source = urlopen(source)
+                else:
+                    source = open(source, encoding=encoding)  # noqa: SIM115
 
-        # Create a dedicated parser with the ``kw`` parameter
-        parser = self._parser.__class__(encoding=encoding, **kw)
-        # This parser will generate nodes of type ``Tag``
-        parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=tags_factory))
+            # Create a dedicated parser with the ``kw`` parameter
+            parser = self._parser.__class__(encoding=encoding, **kw)
+            # This parser will generate nodes of type ``Tag``
+            parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=tags_factory))
 
-        if not fragment:
-            # Parse a tree (only one root)
-            # ----------------------------
+            if not fragment:
+                # Parse a tree (only one root)
+                # ----------------------------
 
-            root = etree.parse(source, parser).getroot()
+                root = etree.parse(source, parser).getroot()
+                source.close()
+
+                # Attach the renderer to the root
+                if root is not None:
+                    root._renderer = self
+
+                return root
+
+            # Parse a fragment (multiple roots)
+            # ---------------------------------
+
+            # Create a dummy root
+            xml = BufferIO(b'<html><body>%s</body></html>' % source.read())
+        finally:
             source.close()
-
-            # Attach the renderer to the root
-            if root is not None:
-                root._renderer = self
-
-            return root
-
-        # Parse a fragment (multiple roots)
-        # ---------------------------------
-
-        # Create a dummy root
-        xml = BufferIO(b'<html><body>%s</body></html>' % source.read())
-        source.close()
 
         root = etree.parse(xml, parser).getroot()[0]
         for e in root:

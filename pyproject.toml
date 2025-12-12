@@ -1,9 +1,10 @@
 # --
-# (C)opyright Net-ng 2008-2025
+# Copyright (c) 2008-2025 Net-ng.
+# All rights reserved.
 #
-# This is Net-ng proprietary source code
-# Any reproduction modification or use without prior written
-# approval from Net-ng is strictly forbidden.
+# This software is licensed under the BSD License, as described in
+# the file LICENSE.txt, which you should have received as part of
+# this distribution.
 # --
 
 [build-system]
@@ -18,13 +19,8 @@ dynamic = ['version']
 description = 'Nagare XML renderer'
 authors = [{ name = 'Net-ng' }, { email = 'contact@net-ng.com' }]
 license = { file = 'LICENSE.txt' }
-requires-python = '>=3.8'
-dependencies = [
-    """lxml \
-     @ https://files.pythonhosted.org/packages/06/5a/e11cad7b79f2cf3dd2ff8f81fa8ca667e7591d3d8451768589996b65dec1/lxml-4.9.2.tar.gz \
-     ; platform_system!='Windows' and python_full_version=='3.8.1'""",
-    "lxml ; platform_system=='Windows' or python_full_version!='3.8.1'",
-]
+requires-python = '>=3.10'
+dependencies = ['lxml']
 
 [project.readme]
 file = 'README.rst'
@@ -63,10 +59,13 @@ select = [
     'W',
     'YTT',
 ]
-ignore = ['COM812', 'D10', 'D401', 'ISC001', 'S311']
+ignore = ['COM812', 'D10', 'D401', 'ISC001', 'S310', 'S311']
 isort.length-sort = true
 pydocstyle.convention = 'google'
 flake8-quotes.inline-quotes = 'single'
+
+[tool.ruff.lint.per-file-ignores]
+'tests/*' = ['S101']
 
 [tool.pytest.ini_options]
 testpaths = ['tests']

@@ -10,11 +10,12 @@
 import os
 
 from lxml import etree
+
 from nagare.renderers import xml
 
 
 def test_parse_xmlstring1():
-    """Good encoding"""
+    """Good encoding."""
     try:
         x = xml.Renderer()
         f = open(os.path.join(os.path.dirname(__file__), 'test_xmlns_1.xml'))
@@ -27,7 +28,7 @@ def test_parse_xmlstring1():
 
 
 def test_parse_xml1():
-    """Good encoding"""
+    """Good encoding."""
     try:
         x = xml.Renderer()
         x.fromfile(os.path.join(os.path.dirname(__file__), 'test_xmlns_1.xml'))
@@ -38,12 +39,11 @@ def test_parse_xml1():
 
 
 def test_parse_xmlstring2():
-    """Bad encoding"""
+    """Bad encoding."""
     try:
         x = xml.Renderer()
-        f = open(os.path.join(os.path.dirname(__file__), 'iso-8859.xml'))
-        x.fromfile(f, encoding='utf-8')
-        f.close()
+        with open(os.path.join(os.path.dirname(__file__), 'iso-8859.xml')) as f:
+            x.fromfile(f, encoding='utf-8')
     except (etree.XMLSyntaxError, UnicodeDecodeError):
         assert True
     else:
@@ -54,7 +54,7 @@ xml_fragments_1 = 'leading_text<fragment1></fragment1>text<fragment2></fragment2
 
 
 def test_parse_xmlstring3():
-    """Parse fragment xml with fragment flag"""
+    """Parse fragment xml with fragment flag."""
     x = xml.Renderer()
     roots = x.fromstring(xml_fragments_1, fragment=True)
     assert roots[0] == b'leading_text'
@@ -64,7 +64,7 @@ def test_parse_xmlstring3():
 
 
 def test_parse_xmlstring4():
-    """Parse xml tree with fragment flag"""
+    """Parse xml tree with fragment flag."""
     x = xml.Renderer()
     roots = x.fromstring(xml_fragments_1, fragment=True, no_leading_text=True)
     assert roots[0].tostring() == b'<fragment1/>text'
@@ -73,7 +73,7 @@ def test_parse_xmlstring4():
 
 
 def test_parse_xmlstring5():
-    """Test parse child type"""
+    """Test parse child type."""
     x = xml.Renderer()
     root = x.fromstring('<a>text</a>')
-    assert type(root) == xml.Tag
+    assert type(root) is xml.Tag

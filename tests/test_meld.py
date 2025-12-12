@@ -9,7 +9,6 @@
 
 from nagare.renderers import xml
 
-
 xml_test1_in = """
     <node xmlns:meld="http://www.plope.com/software/meld3">
       <child meld:id="child"/>
@@ -18,7 +17,7 @@ xml_test1_in = """
 
 
 def test_findmeld1():
-    """One element"""
+    """One element."""
     x = xml.Renderer()
     node = x.fromstring(xml_test1_in)
     child = node.findmeld('child')
@@ -26,7 +25,7 @@ def test_findmeld1():
 
 
 def test_findmeld2():
-    """Zero element"""
+    """Zero element."""
     x = xml.Renderer()
     node = x.fromstring("""<node xmlns:meld="http://www.plope.com/software/meld3"></node>""")
     child = node.findmeld('child')
@@ -34,7 +33,7 @@ def test_findmeld2():
 
 
 def test_findmeld3():
-    """Zero element and default argument"""
+    """Zero element and default argument."""
     x = xml.Renderer()
     node = x.fromstring("""<node xmlns:meld="http://www.plope.com/software/meld3"></node>""")
     child = node.findmeld('child', 'test')
@@ -42,7 +41,7 @@ def test_findmeld3():
 
 
 def test_replace1():
-    """Replace simple node by node"""
+    """Replace simple node by node."""
     x = xml.Renderer()
 
     child1 = x.child1()
@@ -55,7 +54,7 @@ def test_replace1():
 
 
 def test_replace2():
-    """Replace simple node with text before by node"""
+    """Replace simple node with text before by node."""
     x = xml.Renderer()
 
     child1 = x.child1()
@@ -68,7 +67,7 @@ def test_replace2():
 
 
 def test_replace3():
-    """Replace simple node with text after by node"""
+    """Replace simple node with text after by node."""
     x = xml.Renderer()
 
     child1 = x.child1()
@@ -81,7 +80,7 @@ def test_replace3():
 
 
 def test_replace4():
-    """Replace simple node by text"""
+    """Replace simple node by text."""
     x = xml.Renderer()
 
     child1 = x.child1()
@@ -93,7 +92,7 @@ def test_replace4():
 
 
 def test_replace5():
-    """Replace simple node by node + text"""
+    """Replace simple node by node + text."""
     x = xml.Renderer()
 
     child1 = x.child1()
@@ -106,7 +105,7 @@ def test_replace5():
 
 
 def test_replace6():
-    """Replace root node"""
+    """Replace root node."""
     x = xml.Renderer()
 
     node = x.node()
@@ -128,7 +127,7 @@ def test_replace7():
 
 
 def test_repeat1():
-    """Repeat with 2 simple text, use childname argument"""
+    """Repeat with 2 simple text, use childname argument."""
     x = xml.Renderer()
 
     node = x.fromstring(xml_test1_in)
@@ -140,7 +139,7 @@ def test_repeat1():
 
 
 def test_repeat2():
-    """Repeat with 2 simple text, don't use childname argument"""
+    """Repeat with 2 simple text, don't use childname argument."""
     x = xml.Renderer()
 
     node = x.fromstring(xml_test1_in)
@@ -153,7 +152,7 @@ def test_repeat2():
 
 
 def test_repeat3():
-    """Findmeld in repeat loop"""
+    """Findmeld in repeat loop."""
     h = xml.Renderer()
 
     xhtml_tree_2 = '<div xmlns:meld="http://www.plope.com/software/meld3"><ul><li meld:id="entry"><span meld:id="count">count</span></li></ul></div>'
@@ -179,20 +178,19 @@ def test_namespaces():
     x = xml.Renderer()
     x.namespaces = {'meld': xml.MELD_NS}
 
-    with x.contacts:
-        with x.contact.meld_id('contact'):
-            x << x.name.meld_id('name')
-            with x.address.meld_id('addr'):
-                x << 'ici, rennes'
+    with x.contacts, x.contact.meld_id('contact'):
+        x << x.name.meld_id('name')
+        with x.address.meld_id('addr'):
+            x << 'ici, rennes'
 
-    result = b'''
+    result = b"""
     <contacts xmlns:meld="http://www.plope.com/software/meld3">
       <contact meld:id="contact">
         <name meld:id="name"/>
         <address meld:id="addr">ici, rennes</address>
       </contact>
     </contacts>
-    '''
+    """
 
     result = b''.join(line.lstrip() for line in result.splitlines())
     assert x.root.tostring(xml_declaration=False) == result
@@ -202,17 +200,16 @@ def test_namespaces():
 def test_repeat4():
     x = xml.Renderer()
 
-    with x.contacts:
-        with x.contact.meld_id('contact'):
-            x << x.name.meld_id('name')
-            with x.address.meld_id('addr'):
-                x << 'ici, rennes'
+    with x.contacts, x.contact.meld_id('contact'):
+        x << x.name.meld_id('name')
+        with x.address.meld_id('addr'):
+            x << 'ici, rennes'
 
     for e, (name, addr) in x.root.repeat((('bill', 'seatle'), ('steve', 'cupertino')), 'contact'):
         e.findmeld('name').text = name
         e.findmeld('addr').text = addr
 
-    result = b'''
+    result = b"""
     <contacts>
       <contact xmlns:ns0="http://www.plope.com/software/meld3" ns0:id="contact">
         <name ns0:id="name">bill</name>
@@ -222,7 +219,7 @@ def test_repeat4():
         <name ns0:id="name">steve</name>
         <address ns0:id="addr">cupertino</address>
       </contact>
-    </contacts>'''
+    </contacts>"""
 
     result = b''.join(line.lstrip() for line in result.splitlines())
     assert x.root.tostring() == result

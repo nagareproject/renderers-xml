@@ -11,7 +11,7 @@
 
 import copy
 import random
-from io import BytesIO as BufferIO
+from io import BytesIO
 from urllib.request import urlopen
 from collections.abc import Iterable
 
@@ -83,7 +83,7 @@ class Tag(etree.ElementBase):
             and not frozenset(self.attrib).issubset(self._authorized_attribs)
         ):
             raise AttributeError(
-                'Bad attributes for element <%s>: ' % self.tag
+                f'Bad attributes for element <{self.tag}>: '
                 + ', '.join(frozenset(self.attrib) - self._authorized_attribs)
             )
 
@@ -158,7 +158,7 @@ class Tag(etree.ElementBase):
         Return:
           - the tag found, else the ``default`` value
         """
-        nodes = self.xpath('.//*[@meld:id="%s"]' % id, namespaces={'meld': MELD_NS})
+        nodes = self.xpath(f'.//*[@meld:id="{id}"]', namespaces={'meld': MELD_NS})
 
         # Return only the first tag found
         return nodes[0] if len(nodes) != 0 else default
@@ -289,8 +289,14 @@ class XmlRenderer:
     doctype = ''
     content_type = 'text/xml'
 
-    _parser = etree.XMLParser()
-    _parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=Tag))
+    @staticmethod
+    def create_parser(tags_factory, **kw):
+        parser = etree.XMLParser(**kw)
+        parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=tags_factory))
+
+        return parser
+
+    _parser = create_parser(Tag)
 
     def __init__(self, parent=None, *args, **kw):
         """Renderer initialisation."""
@@ -440,7 +446,7 @@ class XmlRenderer:
         """Parse a XML file.
 
         In:
-          - ``source`` -- can be a filename or a file object
+          - ``source`` -- can be an url, a filename or a file object
           - ``fragment`` -- if ``True``, can parse a XML fragment i.e a XML without
             a unique root
           - ``no_leading_text`` -- if ``fragment`` is ``True``, ``no_leading_text``
@@ -451,53 +457,40 @@ class XmlRenderer:
           - the root element of the parsed XML, if ``fragment`` is ``False``
           - a list of XML elements, if ``fragment`` is ``True``
         """
-        try:
-            if isinstance(source, str):
-                if source.startswith(('http://', 'https://', 'ftp://')):
-                    source = urlopen(source)
-                else:
-                    source = open(source, encoding=encoding)  # noqa: SIM115
+        if isinstance(source, str):
+            if source.startswith(('http://', 'https://', 'ftp://')):
+                source = urlopen(source)
+            else:
+                source = open(source, mode='rb')  # noqa: SIM115
 
-            # Create a dedicated parser with the ``kw`` parameter
-            parser = self._parser.__class__(encoding=encoding, **kw)
-            # This parser will generate nodes of type ``Tag``
-            parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=tags_factory))
+        with source:
+            if fragment:
+                # Create a dummy root
+                source = BytesIO(b'<html><body>%s</body></html>' % source.read())
 
-            if not fragment:
-                # Parse a tree (only one root)
-                # ----------------------------
+            parser = self.create_parser(tags_factory, encoding=encoding, **kw)
+            root = etree.parse(source, parser).getroot()
 
-                root = etree.parse(source, parser).getroot()
-                source.close()
+        if not fragment:
+            tags = [root]
+        else:
+            root = root[0]
 
-                # Attach the renderer to the root
-                if root is not None:
-                    root._renderer = self
+            # Return the children of the dummy root
+            tags = root = ([root.text] if root.text and not no_leading_text else []) + list(root)
 
-                return root
+        for tag in tags:
+            if isinstance(tag, tags_factory):
+                # Attach this renderer to each roots
+                tag._renderer = self
 
-            # Parse a fragment (multiple roots)
-            # ---------------------------------
+        return root
 
-            # Create a dummy root
-            xml = BufferIO(b'<html><body>%s</body></html>' % source.read())
-        finally:
-            source.close()
-
-        root = etree.parse(xml, parser).getroot()[0]
-        for e in root:
-            if isinstance(e, tags_factory):
-                # Attach the renderer to each roots
-                e._renderer = self
-
-        # Return the children of the dummy root
-        return ((root.text.encode(encoding),) if root.text and not no_leading_text else ()) + tuple(root[:])
-
-    def fromstring(self, text, tags_factory=Tag, fragment=False, no_leading_text=False, **kw):
+    def fromstring(self, text, tags_factory=Tag, fragment=False, no_leading_text=False, encoding='utf-8', **kw):
         """Parse a XML string.
 
         In:
-          - ``text`` -- can be a ``str`` or ``unicode`` string
+          - ``text`` -- can be a ``bytes`` or ``str``
           - ``fragment`` -- if ``True``, can parse a XML fragment i.e a XML without
             a unique root
           - ``no_leading_text`` -- if ``fragment`` is ``True``, ``no_leading_text``
@@ -508,10 +501,14 @@ class XmlRenderer:
           - the root element of the parsed XML, if ``fragment`` is ``False``
           - a list of XML elements, if ``fragment`` is ``True``
         """
-        if isinstance(text, str):
-            text = text.encode(kw.setdefault('encoding', 'utf-8'))
-
-        return self.fromfile(BufferIO(text), tags_factory, fragment, no_leading_text, **kw)
+        return self.fromfile(
+            BytesIO(text.encode(encoding) if isinstance(text, str) else text),
+            tags_factory,
+            fragment,
+            no_leading_text,
+            encoding=encoding,
+            **kw,
+        )
 
     @staticmethod
     def start_rendering(*args, **kw):

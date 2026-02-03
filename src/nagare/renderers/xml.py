@@ -289,14 +289,8 @@ class XmlRenderer:
     doctype = ''
     content_type = 'text/xml'
 
-    @staticmethod
-    def create_parser(tags_factory, **kw):
-        parser = etree.XMLParser(**kw)
-        parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=tags_factory))
-
-        return parser
-
-    _parser = create_parser(Tag)
+    _parser = etree.XMLParser()
+    _parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=Tag))
 
     def __init__(self, parent=None, *args, **kw):
         """Renderer initialisation."""
@@ -468,7 +462,9 @@ class XmlRenderer:
                 # Create a dummy root
                 source = BytesIO(b'<html><body>%s</body></html>' % source.read())
 
-            parser = self.create_parser(tags_factory, encoding=encoding, **kw)
+            parser = self._parser.__class__(encoding=encoding, **kw)
+            parser.set_element_class_lookup(etree.ElementDefaultClassLookup(element=tags_factory))
+
             root = etree.parse(source, parser).getroot()
 
         if not fragment:
